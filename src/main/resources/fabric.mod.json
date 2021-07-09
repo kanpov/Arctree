@@ -1,0 +1,25 @@
+{
+    "schemaVersion": 1,
+    "id": "arctree",
+    "version": "${version}",
+    "name": "Arctree",
+    "description": "An easy-to-use API for making trees in Fabric Minecraft.",
+    "authors": [
+        "RedGrapefruit09"
+    ],
+    "contact": {
+        "repo": "https://github.com/RedGrapefruit09/Arctree"
+    },
+    "license": "MIT",
+    "icon": "assets/arctree/icon.png",
+    "environment": "*",
+    "entrypoints": {},
+    "mixins": [
+        "arctree.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.11.6",
+        "fabric": "*",
+        "minecraft": "1.17.1"
+    }
+}
