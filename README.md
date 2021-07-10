@@ -5,6 +5,12 @@ Arctree is an easy-to-use, lightweight library for FabricMC modding.
 
 It gives you all the tools to create trees in Minecraft, as complex as you wish.
 
+## Install
+
+The library cannot be installed currently without a manual JAR.
+
+I'm working on publishing it on Maven Central.
+
 ## Main guide
 
 ### Registering tree types
