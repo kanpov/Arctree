@@ -7,9 +7,26 @@ It gives you all the tools to create trees in Minecraft, as complex as you wish.
 
 ## Install
 
-The library cannot be installed currently without a manual JAR.
+The library is available on my [custom Maven](https://github.com/RedGrapefruit09/Maven) for anyone to include.
 
-I'm working on publishing it on Maven Central.
+Put this into your `build.gradle` before the `dependencies` block:
+```groovy
+repositories {
+   maven {
+     name = "RedGrapefruit09"
+     url = "https://raw.githubusercontent.com/RedGrapefruit09/Maven/master"
+     content {
+         includeGroup("com.redgrapefruit09.arctree")
+     }
+  }
+}
+
+dependencies {
+   modImplementation("com.redgrapefruit09.arctree:arctree:1.0")
+}
+```
+
+If these blocks are already there, just copy-paste the code inside them.
 
 ## Main guide
 
