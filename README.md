@@ -126,7 +126,7 @@ public static final ConfiguredFeature<?, ?> MY_TREE = ArctreeCreator.create()
      // Highly not recommended to configure on your own if you don't know what you're doing.
     .minimumSize(...)
      // An ImmutableList of TreeDecorators for this tree. Optional (empty by default).
-     // Recommended to create using the ArctreeCreator.decorators helper method
+     // Recommended to create using the ArctreeCreator.decoratorList helper method
     .decorators(ArctreeCreator.decoratorList(...))
      // The BlockStateProvider for the dirt generated underneath the tree. Optional.
     .dirtProvider(...)
