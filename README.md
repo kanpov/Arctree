@@ -22,9 +22,9 @@ repositories {
 }
 
 dependencies {
-   modImplementation("com.redgrapefruit09.arctree:arctree:1.0")
+   modImplementation("com.redgrapefruit09.arctree:arctree:1.0.1")
    // This bundles the library inside of your mod so it doesn't need to be installed separately
-   include("com.redgrapefruit09.arctree:arctree:1.0")
+   include("com.redgrapefruit09.arctree:arctree:1.0.1")
 }
 ```
 
