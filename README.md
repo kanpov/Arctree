@@ -18,7 +18,6 @@ Put this into your `build.gradle`:
 ```groovy
 repositories {
    maven {
-     name = "RedGrapefruit09"
      url = "https://raw.githubusercontent.com/RedGrapefruit09/Maven/master"
      content {
          includeGroup("com.redgrapefruit09.arctree")
