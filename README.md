@@ -7,11 +7,11 @@ It gives you all the tools to create trees in Minecraft, as complex as you wish.
 
 ## Install
 
-The library is available on my [custom Maven](https://github.com/RedGrapefruit09/Maven) for anyone to include.
+The library is available on my custom Maven for anyone to include.
 
 Put this into your `gradle.properties`, at the end of the file:
 ```properties
-arctree_version=1.0.2
+arctree_version=1.1
 ```
 
 Put this into your `build.gradle`:
@@ -103,6 +103,8 @@ The `ArctreeTypes` class has methods that handle the conversion automatically fo
 
 ### Making ConfiguredFeatures
 
+**WARNING:** This API is experimental in 1.18.1. Use it at your own risk!
+
 As you might know, for trees, instead of creating a new `Feature`, all you have to do is\
 reconfigure `Feature.TREE` with settings of your preference.
 
@@ -183,6 +185,8 @@ Your standard interoperability will work well out-of-the-box.
 Everything is annotated with either `@NotNull` or `@Nullable`, so there shouldn't be nullability issues.
 
 ### Tree DSL
+
+**WARNING:** This API is experimental in 1.18.1. Use it at your own risk!
 
 This is the main feature of the Kotlin part of the library.
 
