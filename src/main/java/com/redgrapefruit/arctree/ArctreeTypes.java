@@ -1,10 +1,7 @@
 package com.redgrapefruit.arctree;
 
 import com.mojang.serialization.Codec;
-import com.redgrapefruit.arctree.mixin.BlockStateProviderTypeInvoker;
-import com.redgrapefruit.arctree.mixin.FoliagePlacerTypeInvoker;
-import com.redgrapefruit.arctree.mixin.TreeDecoratorTypeInvoker;
-import com.redgrapefruit.arctree.mixin.TrunkPlacerTypeInvoker;
+import com.redgrapefruit.arctree.mixin.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProviderType;
@@ -98,10 +95,10 @@ public final class ArctreeTypes {
     }
 
     /**
-     * Wraps {@link HeightProviderType#register} with an {@code Identifier}
+     * Creates a {@link HeightProviderType}, registers and returns it.
      */
     @NotNull
     public static <T extends HeightProvider> HeightProviderType<T> heightProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
-        return HeightProviderType.register(id.toString(), codec);
+        return HeightProviderTypeInvoker.invokeRegister(id.toString(), codec);
     }
 }

@@ -9,9 +9,9 @@ import net.minecraft.world.gen.feature.size.FeatureSize;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
 import net.minecraft.world.gen.foliage.FoliagePlacer;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
-import net.minecraft.world.gen.stateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.treedecorator.TreeDecorator;
 import net.minecraft.world.gen.trunk.TrunkPlacer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,15 +19,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * An easy-to-use builder for tree {@code ConfiguredFeature}s.
- *
+ * <br><br>
  * This is technically optional, but highly recommended to use.
+ * <br><br>
+ * <b>Experimental feature on 1.18</b>, subject to change. (1.18 broke some {@code ConfiguredFeature} stuff and the support for it is not finished yet).
  */
+@ApiStatus.Experimental
 public final class ArctreeCreator {
     /**
      * The {@code BlockStateProvider} for the tree's trunk
@@ -89,7 +90,7 @@ public final class ArctreeCreator {
      */
     @Optional
     @NotNull
-    private BlockStateProvider dirtProvider = new SimpleBlockStateProvider(Blocks.DIRT.getDefaultState());
+    private BlockStateProvider dirtProvider = new DefaultBlockStateProvider(Blocks.DIRT.getDefaultState());
 
     /**
      * Does this tree ignore vine generation.
@@ -186,8 +187,9 @@ public final class ArctreeCreator {
     /**
      * Builder for {@link #saplingProvider}
      */
-    @Mandatory
     @NotNull
+    @Deprecated // no longer used in Minecraft 1.18+
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.2")
     public ArctreeCreator saplingProvider(@NotNull BlockStateProvider saplingProvider) {
         this.saplingProvider = saplingProvider;
         return this;
@@ -268,7 +270,7 @@ public final class ArctreeCreator {
 
         // Create TreeFeatureConfig.Builder
         TreeFeatureConfig.Builder configBuilder = new TreeFeatureConfig.Builder
-                (trunkProvider, trunkPlacer, foliageProvider, saplingProvider, foliagePlacer, minimumSize);
+                (trunkProvider, trunkPlacer, foliageProvider, foliagePlacer, minimumSize);
 
         if (!decorators.isEmpty()) configBuilder.decorators(decorators);
         configBuilder.dirtProvider(dirtProvider);
@@ -278,9 +280,8 @@ public final class ArctreeCreator {
         // Create the ConfiguredFeature and return it
 
        return Feature.TREE
-                .configure(configBuilder.build())
-                .spreadHorizontally()
-                .applyChance(spawnChance);
+                .configure(configBuilder.build());
+                //.applyChance(spawnChance);
     }
 
     /**

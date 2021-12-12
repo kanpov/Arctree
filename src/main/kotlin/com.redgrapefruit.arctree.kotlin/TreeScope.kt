@@ -1,6 +1,7 @@
 package com.redgrapefruit.arctree.kotlin
 
 import com.google.common.collect.ImmutableList
+import com.redgrapefruit.arctree.DefaultBlockStateProvider
 import net.minecraft.block.Blocks
 import net.minecraft.world.gen.feature.ConfiguredFeature
 import net.minecraft.world.gen.feature.Feature
@@ -9,13 +10,16 @@ import net.minecraft.world.gen.feature.size.FeatureSize
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize
 import net.minecraft.world.gen.foliage.FoliagePlacer
 import net.minecraft.world.gen.stateprovider.BlockStateProvider
-import net.minecraft.world.gen.stateprovider.SimpleBlockStateProvider
 import net.minecraft.world.gen.treedecorator.TreeDecorator
 import net.minecraft.world.gen.trunk.TrunkPlacer
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * The DSL scope for configuring your tree.
+ *
+ * **TreeScope and ArctreeCreator APIs are EXPERIMENTAL on 1.18** due to some world generation features being broken.
  */
+@ApiStatus.Experimental
 class TreeScope internal constructor() {
     /**
      * A [BlockStateProvider] for the trunk of the tree
@@ -32,7 +36,8 @@ class TreeScope internal constructor() {
     /**
      * A [BlockStateProvider] for the sapling that the tree can be planted with
      */
-    @Mandatory
+    @Deprecated("This field is no longer in Minecraft 1.18+")
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.2")
     var saplingProvider: BlockStateProvider? = null
 
     /**
@@ -69,7 +74,7 @@ class TreeScope internal constructor() {
      * Minecraft's standard dirt block by default.
      */
     @Optional
-    var dirtProvider: BlockStateProvider = SimpleBlockStateProvider(Blocks.DIRT.defaultState)
+    var dirtProvider: BlockStateProvider = DefaultBlockStateProvider(Blocks.DIRT.defaultState)
 
     /**
      * Lets the worldgen ignore vines in the way.
@@ -101,7 +106,7 @@ class TreeScope internal constructor() {
 
         // Create TreeFeatureConfig.Builder
         val builder = TreeFeatureConfig.Builder(
-            trunkProvider, trunkPlacer, foliageProvider, saplingProvider, foliagePlacer, minimumSize)
+            trunkProvider, trunkPlacer, foliageProvider, foliagePlacer, minimumSize)
 
         if (!decorators.isEmpty()) builder.decorators(decorators)
         builder.dirtProvider(dirtProvider)
@@ -111,8 +116,7 @@ class TreeScope internal constructor() {
         // Create the ConfiguredFeature and return it
         return Feature.TREE
             .configure(builder.build())
-            .spreadHorizontally()
-            .applyChance(spawnChance)
+            //.applyChance(spawnChance)
     }
 
     /**
