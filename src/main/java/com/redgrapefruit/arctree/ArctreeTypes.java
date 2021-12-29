@@ -19,6 +19,8 @@ import net.minecraft.world.gen.trunk.TrunkPlacer;
 import net.minecraft.world.gen.trunk.TrunkPlacerType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * The class for registering locked registry wrappers (Type's) for trees and other worldgen.
  * <br><br>
@@ -36,6 +38,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends TrunkPlacer> TrunkPlacerType<T> trunkPlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return TrunkPlacerTypeInvoker.invokeRegister(id.toString(), codec);
     }
 
@@ -49,6 +54,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends FoliagePlacer> FoliagePlacerType<T> foliagePlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return FoliagePlacerTypeInvoker.invokeRegister(id.toString(), codec);
     }
 
@@ -62,6 +70,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends TreeDecorator> TreeDecoratorType<T> treeDecoratorType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return TreeDecoratorTypeInvoker.invokeRegister(id.toString(), codec);
     }
 
@@ -75,6 +86,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends BlockStateProvider> BlockStateProviderType<T> blockStateProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return BlockStateProviderTypeInvoker.invokeRegister(id.toString(), codec);
     }
 
@@ -83,6 +97,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends IntProvider> IntProviderType<T> intProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return IntProviderType.register(id.toString(), codec);
     }
 
@@ -91,6 +108,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends FloatProvider> FloatProviderType<T> floatProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return FloatProviderType.register(id.toString(), codec);
     }
 
@@ -99,6 +119,9 @@ public final class ArctreeTypes {
      */
     @NotNull
     public static <T extends HeightProvider> HeightProviderType<T> heightProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(codec);
+
         return HeightProviderTypeInvoker.invokeRegister(id.toString(), codec);
     }
 }

@@ -1,17 +1,27 @@
 package com.redgrapefruit.arctree;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.gen.decorator.HeightmapPlacementModifier;
+import net.minecraft.world.gen.decorator.PlacementModifier;
+import net.minecraft.world.gen.decorator.RarityFilterPlacementModifier;
+import net.minecraft.world.gen.decorator.SquarePlacementModifier;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.gen.feature.size.FeatureSize;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
 import net.minecraft.world.gen.foliage.FoliagePlacer;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
+import net.minecraft.world.gen.stateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.treedecorator.TreeDecorator;
 import net.minecraft.world.gen.trunk.TrunkPlacer;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,16 +29,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * An easy-to-use builder for tree {@code ConfiguredFeature}s.
  * <br><br>
  * This is technically optional, but highly recommended to use.
- * <br><br>
- * <b>Experimental feature on 1.18</b>, subject to change. (1.18 broke some {@code ConfiguredFeature} stuff and the support for it is not finished yet).
  */
-@ApiStatus.Experimental
 public final class ArctreeCreator {
     /**
      * The {@code BlockStateProvider} for the tree's trunk
@@ -43,13 +53,6 @@ public final class ArctreeCreator {
     @Mandatory
     @Nullable
     private BlockStateProvider foliageProvider;
-
-    /**
-     * The {@code BlockStateProvider} for the tree's sapling
-     */
-    @Mandatory
-    @Nullable
-    private BlockStateProvider saplingProvider;
 
     /**
      * The {@code TrunkPlacer} for the tree
@@ -67,8 +70,6 @@ public final class ArctreeCreator {
 
     /**
      * The minimum {@code FeatureSize} for the tree.
-     *
-     * The optional value is recommended to use.
      */
     @Optional
     @NotNull
@@ -76,21 +77,17 @@ public final class ArctreeCreator {
 
     /**
      * An {@code ImmutableList} of all {@code TreeDecorator}s used in this tree.
-     *
-     * Empty by default.
      */
     @Optional
     @NotNull
-    private ImmutableList<TreeDecorator> decorators = ImmutableList.of();
+    private final List<TreeDecorator> decorators = new ArrayList<>();
 
     /**
      * The {@code BlockStateProvider} for dirt generated underneath the tree.
-     *
-     * The standard Minecraft dirt block by default.
      */
     @Optional
     @NotNull
-    private BlockStateProvider dirtProvider = new DefaultBlockStateProvider(Blocks.DIRT.getDefaultState());
+    private BlockStateProvider dirtProvider = SimpleBlockStateProvider.of(Blocks.DIRT.getDefaultState());
 
     /**
      * Does this tree ignore vine generation.
@@ -102,19 +99,38 @@ public final class ArctreeCreator {
 
     /**
      * Place dirt forcefully.
-     *
-     * {@code false} by default.
      */
     @Optional
     private boolean forceDirt = false;
 
     /**
      * The chance of spawning the tree from 0 to 10.
-     *
-     * 3 or 33% by default.
+     * <br><br>
+     * <b>Note:</b> this chance is <b>not</b> a percentage! It is a chance of x out of 10, for example, 3
+     * represents a chance of 3 out of 10, or 33%. Be careful!
      */
     @Optional
     private int spawnChance = 3;
+
+    /**
+     * Custom added {@link PlacementModifier}s.
+     */
+    @Optional
+    private final List<PlacementModifier> addedPlacementModifiers = new ArrayList<>();
+
+    /**
+     * Whether to override the default applied {@link PlacementModifier}s.
+     * <br><br>
+     * If true, only {@link PlacementModifier}s from {@link #addedPlacementModifiers} will be used.
+     */
+    @Optional
+    private boolean overrideDefaultPlacementModifiers = false;
+
+    /**
+     * A Fabric Biome Selector that determines where your tree will be found
+     */
+    @Optional
+    private Predicate<BiomeSelectionContext> biomeSelector = BiomeSelectors.foundInOverworld();
 
     /**
      * This class cannot be instantiated from elsewhere.
@@ -133,101 +149,69 @@ public final class ArctreeCreator {
         return new ArctreeCreator();
     }
 
-    /**
-     * Creates an {@code ImmutableList} of {@code TreeDecorator}s in an easy way.
-     *
-     * @param decorators All {@code TreeDecorator}s for use with this tree
-     * @return Built {@link ImmutableList}
-     */
-    @NotNull
-    public static ImmutableList<TreeDecorator> decoratorList(@NotNull TreeDecorator... decorators) {
-        return ImmutableList.copyOf(decorators);
-    }
-
-    /**
-     * Builder for {@link #trunkPlacer}
-     */
     @Mandatory
     @NotNull
     public ArctreeCreator trunkPlacer(@NotNull TrunkPlacer trunkPlacer) {
+        Objects.requireNonNull(trunkPlacer, "Trunk placer must not be null");
+
         this.trunkPlacer = trunkPlacer;
         return this;
     }
 
-    /**
-     * Builder for {@link #foliagePlacer}
-     */
     @Mandatory
     @NotNull
     public ArctreeCreator foliagePlacer(@NotNull FoliagePlacer foliagePlacer) {
+        Objects.requireNonNull(foliagePlacer, "Foliage placer must not be null");
+
         this.foliagePlacer = foliagePlacer;
         return this;
     }
 
-    /**
-     * Builder for {@link #foliagePlacer}
-     */
     @Mandatory
     @NotNull
     public ArctreeCreator trunkProvider(@NotNull BlockStateProvider trunkProvider) {
+        Objects.requireNonNull(trunkProvider, "Trunk provider must not be null");
+
         this.trunkProvider = trunkProvider;
         return this;
     }
 
-    /**
-     * Builder for {@link #foliageProvider}
-     */
     @Mandatory
     @NotNull
     public ArctreeCreator foliageProvider(@NotNull BlockStateProvider foliageProvider) {
+        Objects.requireNonNull(foliageProvider, "Foliage provider must not be null");
+
         this.foliageProvider = foliageProvider;
         return this;
     }
 
-    /**
-     * Builder for {@link #saplingProvider}
-     */
-    @NotNull
-    @Deprecated // no longer used in Minecraft 1.18+
-    @ApiStatus.ScheduledForRemoval(inVersion = "1.2")
-    public ArctreeCreator saplingProvider(@NotNull BlockStateProvider saplingProvider) {
-        this.saplingProvider = saplingProvider;
-        return this;
-    }
-
-    /**
-     * Builder for {@link #minimumSize}
-     */
     @Optional
     @NotNull
     public ArctreeCreator minimumSize(@NotNull FeatureSize minimumSize) {
+        Objects.requireNonNull(minimumSize, "Feature size must not be null");
+
         this.minimumSize = minimumSize;
         return this;
     }
 
-    /**
-     * Builder for {@link #decorators}
-     */
     @Optional
     @NotNull
-    public ArctreeCreator decorators(@NotNull ImmutableList<TreeDecorator> decorators) {
-        this.decorators = decorators;
+    public ArctreeCreator addDecorator(@NotNull TreeDecorator decorator) {
+        Objects.requireNonNull(decorator, "Tree decorator must not be null");
+
+        this.decorators.add(decorator);
         return this;
     }
 
-    /**
-     * Builder for {@link #dirtProvider}
-     */
     @Optional
     @NotNull
     public ArctreeCreator dirtProvider(@NotNull BlockStateProvider dirtProvider) {
+        Objects.requireNonNull(dirtProvider, "Dirt provider must not be null");
+
         this.dirtProvider = dirtProvider;
         return this;
     }
 
-    /**
-     * Builder for {@link #ignoreVines}
-     */
     @Optional
     @NotNull
     public ArctreeCreator ignoreVines() {
@@ -235,9 +219,6 @@ public final class ArctreeCreator {
         return this;
     }
 
-    /**
-     * Builder for {@link #forceDirt}
-     */
     @Optional
     @NotNull
     public ArctreeCreator forceDirt() {
@@ -245,26 +226,51 @@ public final class ArctreeCreator {
         return this;
     }
 
-    /**
-     * Builder for {@link #spawnChance}
-     */
     @Optional
     @NotNull
     public ArctreeCreator spawnChance(int spawnChance) {
+        // Bound checking
+        if (spawnChance <= 0 || spawnChance > 10)
+            throw new RuntimeException("Tree spawn chance out of bounds: " + spawnChance + ". Must be between 0 (exclusive) and 10 (inclusive)");
+
         this.spawnChance = spawnChance;
         return this;
     }
 
+    @Optional
+    @NotNull
+    public ArctreeCreator addPlacementModifier(@NotNull PlacementModifier modifier) {
+        Objects.requireNonNull(modifier, "Placement modifier must not be null");
+
+        this.addedPlacementModifiers.add(modifier);
+        return this;
+    }
+
+    @Optional
+    @NotNull
+    public ArctreeCreator overrideDefaultPlacementModifiers() {
+        this.overrideDefaultPlacementModifiers = true;
+        return this;
+    }
+
+    @Optional
+    @NotNull
+    public ArctreeCreator biomeSelector(@NotNull Predicate<BiomeSelectionContext> selector) {
+        Objects.requireNonNull(selector, "Biome selector must not be null");
+
+        this.biomeSelector = selector;
+        return this;
+    }
+
     /**
-     * Builds the actual {@link ConfiguredFeature}
-     * @return Resulting {@link ConfiguredFeature}
+     * Builds the {@link ArctreeCreatorOutput}, which you can store and then register in your {@link ModInitializer}
+     * with the {@link ArctreeCreatorOutput#register(Identifier)} method.
      */
     @NotNull
-    public ConfiguredFeature<?, ?> build() {
+    public ArctreeCreatorOutput build() {
         // Verify all mandatory values
         verifyMandatory(trunkProvider, "trunkProvider");
         verifyMandatory(foliageProvider, "foliageProvider");
-        verifyMandatory(saplingProvider, "saplingProvider");
         verifyMandatory(trunkPlacer, "trunkPlacer");
         verifyMandatory(foliagePlacer, "foliagePlacer");
 
@@ -277,11 +283,34 @@ public final class ArctreeCreator {
         if (forceDirt) configBuilder.forceDirt();
         if (ignoreVines) configBuilder.ignoreVines();
 
-        // Create the ConfiguredFeature and return it
+        // Set up placement modifiers
+        List<PlacementModifier> modifiers = Lists.newArrayList(
+                RarityFilterPlacementModifier.of(spawnChance), // chance of the tree spawning
+                SquarePlacementModifier.of(), // spread horizontally
+                HeightmapPlacementModifier.of(Heightmap.Type.MOTION_BLOCKING) // in what heights can this tree spawn
+        );
 
-       return Feature.TREE
-                .configure(configBuilder.build());
-                //.applyChance(spawnChance);
+        if (overrideDefaultPlacementModifiers) modifiers.clear();
+
+        modifiers.addAll(addedPlacementModifiers);
+
+        // Create output
+        ConfiguredFeature<?, ?> configured = Feature.TREE.configure(configBuilder.build());
+        PlacedFeature placed = configured.withPlacement(modifiers);
+
+        return new ArctreeCreatorOutput(configured, placed, biomeSelector);
+    }
+
+    /**
+     * Builds your tree and immediately registers it.
+     * <br><br>
+     * <b>Do not use this in a field definition or a static initializer</b>, it will break!<br>
+     * This is only useful if you build and register immediately in your {@link ModInitializer}'s code.
+     *
+     * @param id The tree's {@link Identifier}
+     */
+    public void buildAndRegister(@NotNull Identifier id) {
+        build().register(id);
     }
 
     /**

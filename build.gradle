@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.10.64'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.6.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -22,6 +22,7 @@ dependencies {
 
     // Fabric Language Kotlin for the Kotlin utilities.
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.flk_version}"
+    include "net.fabricmc:fabric-language-kotlin:${project.flk_version}"
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
