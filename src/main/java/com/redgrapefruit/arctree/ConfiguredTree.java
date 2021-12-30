@@ -17,24 +17,24 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * Represents the output of an {@link ArctreeCreator} instance.
+ * Represents the output of an {@link TreeBuilder} instance.
  * <br><br>
- * The {@link ArctreeCreatorOutput} supports <b>automatic registering</b> for your tree, which is the preferred
+ * The {@link ConfiguredTree} supports <b>automatic registering</b> for your tree, which is the preferred
  * way of doing it.
  * <br><br>
  * In Minecraft 1.18, you need to register {@link ConfiguredFeature}s <b>and</b> {@link PlacedFeature}s for your tree,
- * while in 1.17 and earlier you only had a {@link PlacedFeature}. Thus, the result of {@link ArctreeCreator#build()}
+ * while in 1.17 and earlier you only had a {@link PlacedFeature}. Thus, the result of {@link TreeBuilder#build()}
  * can no longer be a single variable.
  * <br><br>
  * {@link PlacedFeature}s essentially replace the Decorator system that 1.17 and earlier had with flexible and
  * easy-to-use {@link PlacementModifier}s.
  */
-public final class ArctreeCreatorOutput {
+public final class ConfiguredTree {
     private final @NotNull ConfiguredFeature<?, ?> configuredFeature;
     private final @NotNull PlacedFeature placedFeature;
     private final @NotNull Predicate<BiomeSelectionContext> selector;
 
-    public ArctreeCreatorOutput(
+    public ConfiguredTree(
             @NotNull ConfiguredFeature<?, ?> configuredFeature,
             @NotNull PlacedFeature placedFeature,
             @NotNull Predicate<BiomeSelectionContext> selector) {

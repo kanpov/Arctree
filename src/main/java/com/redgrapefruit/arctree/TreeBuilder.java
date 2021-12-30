@@ -39,7 +39,7 @@ import java.util.function.Predicate;
  * <br><br>
  * This is technically optional, but highly recommended to use.
  */
-public final class ArctreeCreator {
+public final class TreeBuilder {
     /**
      * The {@code BlockStateProvider} for the tree's trunk
      */
@@ -110,6 +110,7 @@ public final class ArctreeCreator {
      * represents a chance of 3 out of 10, or 33%. Be careful!
      */
     @Optional
+    @EffectiveWithDefaultModifiersOnly
     private int spawnChance = 3;
 
     /**
@@ -127,31 +128,27 @@ public final class ArctreeCreator {
     private boolean overrideDefaultPlacementModifiers = false;
 
     /**
-     * A Fabric Biome Selector that determines where your tree will be found
+     * A Fabric Biome Selector that determines where your tree will be found.
      */
     @Optional
     private Predicate<BiomeSelectionContext> biomeSelector = BiomeSelectors.foundInOverworld();
 
     /**
-     * This class cannot be instantiated from elsewhere.
-     *
      * Use {@link #create}
      */
-    private ArctreeCreator() {}
+    private TreeBuilder() {}
 
     /**
-     * Creates a new {@code ArctreeCreator}
+     * Creates a new {@link TreeBuilder}
      *
-     * @return Created {@code ArctreeCreator}
+     * @return Created {@link TreeBuilder}
      */
-    @NotNull
-    public static ArctreeCreator create() {
-        return new ArctreeCreator();
+    public static @NotNull TreeBuilder create() {
+        return new TreeBuilder();
     }
 
     @Mandatory
-    @NotNull
-    public ArctreeCreator trunkPlacer(@NotNull TrunkPlacer trunkPlacer) {
+    public @NotNull TreeBuilder trunkPlacer(@NotNull TrunkPlacer trunkPlacer) {
         Objects.requireNonNull(trunkPlacer, "Trunk placer must not be null");
 
         this.trunkPlacer = trunkPlacer;
@@ -159,8 +156,7 @@ public final class ArctreeCreator {
     }
 
     @Mandatory
-    @NotNull
-    public ArctreeCreator foliagePlacer(@NotNull FoliagePlacer foliagePlacer) {
+    public @NotNull TreeBuilder foliagePlacer(@NotNull FoliagePlacer foliagePlacer) {
         Objects.requireNonNull(foliagePlacer, "Foliage placer must not be null");
 
         this.foliagePlacer = foliagePlacer;
@@ -168,8 +164,7 @@ public final class ArctreeCreator {
     }
 
     @Mandatory
-    @NotNull
-    public ArctreeCreator trunkProvider(@NotNull BlockStateProvider trunkProvider) {
+    public @NotNull TreeBuilder trunkProvider(@NotNull BlockStateProvider trunkProvider) {
         Objects.requireNonNull(trunkProvider, "Trunk provider must not be null");
 
         this.trunkProvider = trunkProvider;
@@ -177,8 +172,7 @@ public final class ArctreeCreator {
     }
 
     @Mandatory
-    @NotNull
-    public ArctreeCreator foliageProvider(@NotNull BlockStateProvider foliageProvider) {
+    public @NotNull TreeBuilder foliageProvider(@NotNull BlockStateProvider foliageProvider) {
         Objects.requireNonNull(foliageProvider, "Foliage provider must not be null");
 
         this.foliageProvider = foliageProvider;
@@ -186,8 +180,7 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator minimumSize(@NotNull FeatureSize minimumSize) {
+    public @NotNull TreeBuilder minimumSize(@NotNull FeatureSize minimumSize) {
         Objects.requireNonNull(minimumSize, "Feature size must not be null");
 
         this.minimumSize = minimumSize;
@@ -195,8 +188,7 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator addDecorator(@NotNull TreeDecorator decorator) {
+    public @NotNull TreeBuilder addDecorator(@NotNull TreeDecorator decorator) {
         Objects.requireNonNull(decorator, "Tree decorator must not be null");
 
         this.decorators.add(decorator);
@@ -204,8 +196,7 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator dirtProvider(@NotNull BlockStateProvider dirtProvider) {
+    public @NotNull TreeBuilder dirtProvider(@NotNull BlockStateProvider dirtProvider) {
         Objects.requireNonNull(dirtProvider, "Dirt provider must not be null");
 
         this.dirtProvider = dirtProvider;
@@ -213,22 +204,19 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator ignoreVines() {
+    public @NotNull TreeBuilder ignoreVines() {
         this.ignoreVines = true;
         return this;
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator forceDirt() {
+    public @NotNull TreeBuilder forceDirt() {
         this.forceDirt = true;
         return this;
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator spawnChance(int spawnChance) {
+    public @NotNull TreeBuilder spawnChance(int spawnChance) {
         // Bound checking
         if (spawnChance <= 0 || spawnChance > 10)
             throw new RuntimeException("Tree spawn chance out of bounds: " + spawnChance + ". Must be between 0 (exclusive) and 10 (inclusive)");
@@ -238,8 +226,7 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator addPlacementModifier(@NotNull PlacementModifier modifier) {
+    public @NotNull TreeBuilder addPlacementModifier(@NotNull PlacementModifier modifier) {
         Objects.requireNonNull(modifier, "Placement modifier must not be null");
 
         this.addedPlacementModifiers.add(modifier);
@@ -247,15 +234,13 @@ public final class ArctreeCreator {
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator overrideDefaultPlacementModifiers() {
+    public @NotNull TreeBuilder overrideDefaultPlacementModifiers() {
         this.overrideDefaultPlacementModifiers = true;
         return this;
     }
 
     @Optional
-    @NotNull
-    public ArctreeCreator biomeSelector(@NotNull Predicate<BiomeSelectionContext> selector) {
+    public @NotNull TreeBuilder biomeSelector(@NotNull Predicate<BiomeSelectionContext> selector) {
         Objects.requireNonNull(selector, "Biome selector must not be null");
 
         this.biomeSelector = selector;
@@ -263,11 +248,10 @@ public final class ArctreeCreator {
     }
 
     /**
-     * Builds the {@link ArctreeCreatorOutput}, which you can store and then register in your {@link ModInitializer}
-     * with the {@link ArctreeCreatorOutput#register(Identifier)} method.
+     * Builds the {@link ConfiguredTree}, which you can store and then register in your {@link ModInitializer}
+     * with the {@link ConfiguredTree#register(Identifier)} method.
      */
-    @NotNull
-    public ArctreeCreatorOutput build() {
+    public @NotNull ConfiguredTree build() {
         // Verify all mandatory values
         verifyMandatory(trunkProvider, "trunkProvider");
         verifyMandatory(foliageProvider, "foliageProvider");
@@ -298,7 +282,7 @@ public final class ArctreeCreator {
         ConfiguredFeature<?, ?> configured = Feature.TREE.configure(configBuilder.build());
         PlacedFeature placed = configured.withPlacement(modifiers);
 
-        return new ArctreeCreatorOutput(configured, placed, biomeSelector);
+        return new ConfiguredTree(configured, placed, biomeSelector);
     }
 
     /**
@@ -337,4 +321,10 @@ public final class ArctreeCreator {
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.FIELD, ElementType.METHOD})
     public @interface Mandatory {}
+
+    /**
+     * Indicates that this field will be <b>ignored</b> if default {@link PlacementModifier}s are disabled
+     * with the use of {@link #overrideDefaultPlacementModifiers()}
+     */
+    public @interface EffectiveWithDefaultModifiersOnly {}
 }

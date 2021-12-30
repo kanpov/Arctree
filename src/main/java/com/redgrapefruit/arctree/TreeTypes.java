@@ -23,11 +23,8 @@ import java.util.Objects;
 
 /**
  * The class for registering locked registry wrappers (Type's) for trees and other worldgen.
- * <br><br>
- * {@code IntProvider}s, {@code FloatProvider}s and {@code HeightProvider}s have a bit inconvenient registering methods,
- * so this class unifies them to use {@code Identifier}s.
  */
-public final class ArctreeTypes {
+public final class TreeTypes {
     /**
      * Creates a {@code TrunkPlacerType} and registers it.
      *
@@ -36,8 +33,7 @@ public final class ArctreeTypes {
      * @param <T> The {@code} TrunkPlacer
      * @return The created {@code TrunkPlacerType} for further use.
      */
-    @NotNull
-    public static <T extends TrunkPlacer> TrunkPlacerType<T> trunkPlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+    public static <T extends TrunkPlacer> @NotNull TrunkPlacerType<T> trunkPlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(codec);
 
@@ -52,8 +48,7 @@ public final class ArctreeTypes {
      * @param <T> The {@code FoliagePlacer}
      * @return The created {@code FoliagePlacerType} for further use.
      */
-    @NotNull
-    public static <T extends FoliagePlacer> FoliagePlacerType<T> foliagePlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+    public static <T extends FoliagePlacer> @NotNull FoliagePlacerType<T> foliagePlacerType(@NotNull Identifier id, @NotNull Codec<T> codec) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(codec);
 
@@ -68,8 +63,7 @@ public final class ArctreeTypes {
      * @param <T> The {@code TreeDecorator}
      * @return The created {@code TreeDecoratorType} for further use.
      */
-    @NotNull
-    public static <T extends TreeDecorator> TreeDecoratorType<T> treeDecoratorType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+    public static <T extends TreeDecorator> @NotNull TreeDecoratorType<T> treeDecoratorType(@NotNull Identifier id, @NotNull Codec<T> codec) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(codec);
 
@@ -84,8 +78,7 @@ public final class ArctreeTypes {
      * @param <T> The {@code BlockStateProvider}
      * @return The created {@code BlockStateProviderType} for further use.
      */
-    @NotNull
-    public static <T extends BlockStateProvider> BlockStateProviderType<T> blockStateProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
+    public static <T extends BlockStateProvider> @NotNull BlockStateProviderType<T> blockStateProviderType(@NotNull Identifier id, @NotNull Codec<T> codec) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(codec);
 

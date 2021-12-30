@@ -12,8 +12,7 @@ import java.util.Random;
  * A simple {@code SaplingGenerator} implementation that returns the tree {@code ConfiguredFeature} that you passed it.
  */
 public class SimpleSaplingGenerator extends SaplingGenerator {
-    @NotNull
-    private final ConfiguredFeature<TreeFeatureConfig, ?> feature;
+    private final @NotNull ConfiguredFeature<TreeFeatureConfig, ?> feature;
 
     /**
      * Creates a {@code SimpleSaplingGenerator}
